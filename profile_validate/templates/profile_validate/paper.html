@@ -1,0 +1,128 @@
+{% extends 'profile_validate/base.html' %}
+{% block content %}
+
+{% load static %} {% load extras %}
+<link rel="stylesheet" href="{% static 'css/paper.css' %}">
+<script src="{% static 'paper.js' %}"></script>
+
+<div><h5>승인 > 인증서류</h5></div>
+<input type="button" value="새로고침" onClick="window.location.href='{% url 'paper' random=1 %}'">
+<div><h5>{{ base_list.count }}</h5></div>
+<div class="index"><h6>
+    <pre class="subIndex">· 남자 {{ info|get_item:'male'|count }} (신규 {{ info|get_item:'male_new'|count }}/수정 {{ info|get_item:'male_edit'|count }}/기존 {{ info|get_item:'male_old'|count }}) </pre>
+    <pre class="subIndex">· 여자 {{ info|get_item:'female'|count }} (신규 {{ info|get_item:'female_new'|count }}/수정 {{ info|get_item:'female_edit'|count }}/기존 {{ info|get_item:'female_old'|count }})</pre>
+</h6></div>
+<table class="table">
+    <thead>
+        <tr id="tableCols">
+            <th class="shortCol" scope="col">분류</th>
+            <th class="shortCol" scope="col">날짜</th>
+            <th class="shortCol" scope="col">코드</th>
+            <th class="midCol" scope="col">인증</th>
+            <th class="midCol" scope="col">이름</th>
+            <th class="longCol" scope="col">생년월일</th>
+            <th class="longCol" scope="col">첨부01</th>
+            <th class="longCol" scope="col">첨부02</th>
+            <th class="longCol" scope="col">첨부03</th>
+            <th class="longCol" scope="col">첨부04</th>
+            <th class="longCol" scope="col">담당자</th>
+            <th class="midCol" scope="col"></th>
+            <th class="midCol" scope="col"></th>
+        </tr>
+    </thead>
+    <tbody id="profile_table">
+        {% for info in total_list %}
+            <tr class="simple">
+                <td class="shortCol">
+                    {% for status in base_list %}
+                        {% if status.user_id == info.user.user_id %}
+                            {% if status.flag == 0 %}
+                                <pre>신규</pre>
+                            {% elif status.flag == 3 %}
+                                <pre>수정</pre>
+                            {% elif status.flag == 4 %}
+                                <pre>변경</pre>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                <td class="shortCol">{{ info.user.joined_time.month}}월 {{info.user.joined_time.date.day}}일</td>
+                <td class="shortCol">{{ info.user.user }}</td>
+                <td class="shortCol">{{ info.user.joined_type }}</td>
+                <td class="shortCol">{{ info.user.name }}</td>
+                <td class="shortCol">생일</td>
+                {% with index=info.user.user.pk %}
+                {% for i in "0123"|make_list %}
+                    {% if imgs|get_item:index|get_list:i|get_url == None %}
+                        <td class="midCol"></td>
+                    {% else %}
+                        <td class="midCol check {{ info.user.pk }}" id="image{{ i }}-{{ info.user.pk }}" onclick="checkDenied({{ info.user.pk }}, this.id)">
+                        <div class="overlay" id="deny-{{ info.user.pk }}">반려</div>
+                        <img src="{{ MEDIA_URL }} {{ imgs|get_item:index|get_list:i|get_url }}" width="150">
+                </td>
+                    {% endif %}
+                {% endfor %}
+                <td class="midCol">김란이 주임</td>
+                <td class="shortCol"id="heading-{{ info.user.pk }}">
+                    <a href="{% url 'paper-detail' index=info.pk %}" onclick="return popitup(this)">돋보기</a>
+                <td class="shortCol">
+                    <div class="confirmShow" id="confirm-{{ info.user.pk }}">승인</div>
+                    <div class="denyShow" id="denied-{{ info.user.pk }}" style="display: none">반려</div>
+                </td>
+                {% endwith %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<footer>
+    <div id="totalCount">
+        <pre class="subCount_text">반려 </pre>
+        <pre class="subCount_num" id="deniedCount"></pre>
+        <pre class="subCount_text">/ 승인 </pre>
+        <pre class="subCount_num" id="confirmCount"></pre>
+        <form id="approve-form" action="{% url 'paper-beauty-done' flag_type=2 %}" method=POST onsubmit="getCheck()">
+            {% csrf_token %}
+            <div class="myForm" style="display: none">{{ form.as_p }}</div>
+            <button id="approve-btn" type="submit">완료</button>
+        </form>
+    </div>
+</footer>
+
+<script>
+function getCheck() {
+    var confirmCount = []
+    var deniedCount = []
+
+    $(".confirmShow:visible").each(function() {
+                                    if (this.id) {
+                                        confirmCount.push(this.id.split('-')[1]);
+                                    }
+                                });
+    $(".denyShow:visible").each(function() {
+                                if (this.id) {
+                                    deniedCount.push(this.id.split('-')[1]);
+                                    }
+                                });
+
+    if ($(".confirmShow:visible").length == 0) {
+        confirmCount.push('-')
+    }
+    if ($(".denyShow:visible").length == 0) {
+        deniedCount.push('-')
+    }
+    const confirmedList = confirmCount.join('-');
+    const deniedList = deniedCount.join('-');
+    document.getElementById('id_confirmed').value = confirmedList;
+    document.getElementById('id_denied').value = deniedList;
+    document.getElementById('approve-form').submit();
+}
+
+
+function popitup(url) {
+    newwindow=window.open(url,'name','height=600,width=1200');
+    if (window.focus) {newwindow.focus()}
+        return false;
+}
+</script>
+
+{% endblock %}

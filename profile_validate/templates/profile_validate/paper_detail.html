@@ -1,0 +1,89 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/paper_detail.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+<main>
+    <wrapper>
+        <left>
+            <h6>
+                인증 기준<br>
+                재력가 집안<br>
+                가족자산 총 100억원 이상<br>
+                1가족관계증명서<br>
+                *본인 명의 자산일 경우 생략 가능<br>
+                <br>
+                2자산 증명서류<br>
+                <br>
+                -부동산의 경우<br>
+                1 부동산 등기서류 or 매매계약서<br>
+                2 네이버 부동산 실거래가 캡쳐화면<br>
+                <br>
+                - 현금의 경우<br>
+                은행에서 발행한 잔고/잔액 증명서<br>
+                * 성함이 표시된 최근 일자 서류<br>
+                <br>
+                - 주식의 경우<br>
+                성함이 포함된 주식잔고 증명서<br>
+                <br>
+                - 기타<br>
+                그 외 자산을 인증할 수 있는 서류<br>
+            </h6>
+        </left>
+        <middle>
+            {% for img in imgs %}
+            <div class="imgBox">
+                <img src="{{ MEDIA_URL }} {{ img.image.url }}">
+            </div>
+            {% endfor %}
+        </middle>
+        <right>
+            <pre>유저 정보</pre>
+            이름: {{ user_full.user.user.name }}({{ user_full.user_id }})<br><br>
+            생년월일: 생일<br>
+            휴대폰 번호: {{ user_full.user.user.phone }}<br>
+            접속장치: {{ user_full.user.user.device }}<br>
+            이메일: 이메일<br>
+            비밀번호: 비밀번호<br>
+            가입방법: {{ user_full.user.user.joined_type }}<br>
+            가입날짜: {{ user_full.user.user.joined_time }}<br>
+            최근접속: 최근접속<br>
+            닉네임: {{ user_full.user.nick }}<br>
+            직업: {{ user_full.user.job }}<br>
+            지역: {{ user_full.user.area }}<br>
+            학력: {{ user_full.user.study }}<br>
+            키: {{ user_full.user.height }}<br>
+            체형: {{ user_full.user.body }}<br>
+            성격: {{ user_full.user.Character }}<br>
+            음주: {{ user_full.user.drink }}<br>
+            흡연: {{ user_full.user.smoke }}<br>
+            종교: {{ user_full.user.religion }}<br>
+            마크: {{ mark.one }} {{ mark.two }}<br><br>
+
+            자기소개: {{ user_full.introduce }}<br>
+            인터뷰01: {{ user_full.holiday }}<br>
+            인터뷰02: {{ user_full.interest }}<br>
+            인터뷰03: {{ user_full.trip }}<br>
+        </right>
+    </wrapper>
+    <form action="{% url 'paperdetail-done' index=user_full.user.user.pk %}" method="POST" style="float: right">
+         {% csrf_token %}
+         <input type="submit" id="confirm_btn" name="btn" value="승인">
+         <input type="submit" id="delay_btn" name="btn" value="보류">
+         <input type="submit" id="deny_btn" name="btn" value="반려">
+    </form>
+</main>
+</body>
+</html>
+
+<script>
+
+</script>

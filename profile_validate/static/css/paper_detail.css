@@ -1,0 +1,20 @@
+wrapper{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    aligh-content: space-around;
+}
+
+left{
+    width: 20%;
+}
+middle{
+    width: 60%;
+}
+right{
+    width: 20%
+}
+
+.imgBox img{
+    width: 100%
+}

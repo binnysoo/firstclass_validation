@@ -1,0 +1,41 @@
+*{
+    box-sizing: border-box;
+}
+header{
+    height: 40px;
+}
+main{
+    height: 900px;
+    background-color: #f8f8f8;
+}
+footer{
+    height: 200px;
+}
+#sidebar{
+    height: 900px;
+    width: 13%;
+    background-color: #333;
+    margin-right: auto;
+}
+#container{
+    height: 900px;
+    width: 87%;
+    padding: 10px;
+}
+.list-unstyled{
+    width: 90%;
+    margin: 0 auto;
+    font-size: 20px;
+}
+.list-unstyled p {
+    height: 70px;
+    color: white;
+    margin: auto auto;
+    text-align: center;
+    line-height: 70px;
+}
+.wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}

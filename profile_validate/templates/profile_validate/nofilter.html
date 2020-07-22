@@ -1,0 +1,85 @@
+{% extends 'profile_validate/base.html' %}
+{% block content %}
+
+{% load static %} {% load extras %}
+<link rel="stylesheet" href="{% static 'css/paper.css' %}">
+<script src="{% static 'paper.js' %}"></script>
+
+<div><h5>승인 > 실물인증</h5></div>
+<input type="button" value="새로고침" onClick="window.location.href='{% url 'no-filter' random=1 %}'">
+<div><h5>{{ base_list.count }}</h5></div>
+<div class="index"><h6>
+    <pre class="subIndex">· 남자 {{ info|get_item:'male'|count }} (신규 {{ info|get_item:'male_new'|count }}/수정 {{ info|get_item:'male_edit'|count }}/기존 {{ info|get_item:'male_old'|count }}) </pre>
+    <pre class="subIndex">· 여자 {{ info|get_item:'female'|count }} (신규 {{ info|get_item:'female_new'|count }}/수정 {{ info|get_item:'female_edit'|count }}/기존 {{ info|get_item:'female_old'|count }})</pre>
+</h6></div>
+<table class="table">
+    <thead>
+        <tr id="tableCols">
+            <th class="shortCol" scope="col">분류</th>
+            <th class="shortCol" scope="col">날짜</th>
+            <th class="shortCol" scope="col">코드</th>
+            <th class="midCol" scope="col">첨부 영상</th>
+            <th class="midCol" scope="col">이미지</th>
+            <th class="longCol" scope="col">반려사유</th>
+            <th class="longCol" scope="col">담당자</th>
+            <th class="midCol" scope="col"></th>
+        </tr>
+    </thead>
+    <tbody id="profile_table">
+        <tr class="simple">
+            <td class="shortCol">
+                {% for status in base_list %}
+                    {% if status.user_id == target.user.user_id %}
+                        {% if status.flag == 0 %}
+                            <pre>신규</pre>
+                        {% elif status.flag == 3 %}
+                            <pre>수정</pre>
+                        {% elif status.flag == 4 %}
+                            <pre>변경</pre>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td class="shortCol">{{ target.user.joined_time.month}}월 {{target.user.joined_time.date.day}}일</td>
+            <td class="shortCol">{{ target.user.user }}</td>
+            {% with index=target.user.user.pk %}
+                <td>
+                    {% if video|get_item:index|get_list:0|get_video_url == None %}
+                    {% else %}
+                        <video width='100%' controls>
+                        <source src="{{ MEDIA_URL }} {{ video|get_item:index|get_list:0|get_video_url }}" type='video/mp4'>
+                        </video>
+                    {% endif %}
+                </td>
+                <div class="img_wrapper">
+                <td class="subimg">
+                    {% for i in "012"|make_list %}
+                        {% if imgs|get_item:index|get_list:i|get_url == None %}
+                        {% else %}
+                            <div class="subimg">
+                                <img src="{{ MEDIA_URL }} {{ imgs|get_item:index|get_list:i|get_url }}" width="100%">
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                </div>
+
+            {% endwith %}
+            <td>
+                <form id="approve-form" action="{% url 'nofilter-done' index=target.user.user.pk %}" method=POST>
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button id="approve-btn" type="submit">완료</button>
+                </form>
+            </td>
+            <td class="midCol">김란이 주임</td>
+
+        </tr>
+    </tbody>
+</table>
+<footer>
+
+</footer>
+
+
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'profile_validate/base.html' %}
+{% block content %}
+
+{% load static %} {% load extras %}
+<link rel="stylesheet" href="{% static 'css/photo.css' %}">
+<script src="{% static 'paper.js' %}"></script>
+
+<div><h5>승인 > 프로필 사진</h5></div>
+<div><h5>{{ base_list.count }}</h5></div>
+<div class="index"><h6>
+    <pre class="subIndex">· 합격예상()/ 불합격예상()</pre>
+</h6></div>
+<table class="table">
+    <thead>
+        <tr id="tableCols">
+            <th class="shortCol" scope="col">분류</th>
+            <th class="shortCol" scope="col">날짜</th>
+            <th class="shortCol" scope="col">코드</th>
+            <th class="midCol" scope="col">이미지01</th>
+            <th class="midCol" scope="col">이미지02</th>
+            <th class="longCol" scope="col">이미지03</th>
+            <th class="longCol" scope="col">높은평가</th>
+            <th class="longCol" scope="col">평점</th>
+            <th class="longCol" scope="col">진행률</th>
+            <th class="longCol" scope="col">결과</th>
+            <th class="midCol" scope="col">담당자</th>
+            <th class="midCol" scope="col"></th>
+        </tr>
+    </thead>
+    <tbody id="profile_table">
+        {% for info in total_list %}
+            <tr class="simple">
+                <td class="shortCol">
+                    신규
+                </td>
+                <td class="shortCol">{{ info.user.joined_time.month}}월 {{info.user.joined_time.date.day}}일</td>
+                <td class="shortCol">{{ info.user }}</td>
+                {% with index=info.user.user.pk %}
+                {% for i in "012"|make_list %}
+                    {% if imgs|get_item:index|get_list:i|get_url == None %}
+                        <td class="midCol"></td>
+                    {% else %}
+                        <td class="midCol img">
+                            <img src="{{ MEDIA_URL }} {{ imgs|get_item:index|get_list:i|get_url }}" width="150">
+                        </td>
+                    {% endif %}
+                {% endfor %}
+
+                <td class="shortCol">{{ high_score|get_item:info.user.pk|get_list:0 }}({{ high_score|get_item:info.user.pk|get_list:1 }})</td>
+                <td class="shortCol">{{ avg_score|get_item:info.user.pk }}</td>
+                <td class="shortCol">{{ progress|get_item:info.user.pk }}%</td>
+                <td class="shortCol">
+                    {% if avg_score|get_item:info.user.pk >= 3 %}
+                        합격예상
+                    {% else %}
+                        탈락예상
+                    {% endif %}
+                </td>
+                <td class="midCol">제시카</td>
+                <td>
+                    <form id="approve-form" action="{% url 'paper-beauty-done' flag_type=3 %}" method=POST onsubmit="getCheck({{ info.user.pk }})">
+                        {% csrf_token %}
+                        <div class="myForm" style="display: none">{{ form.as_p }}</div>
+                        <button id="approve-btn" type="submit">완료</button>
+                    </form>
+                </td>
+                {% endwith %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<footer>
+</footer>
+
+<script>
+function getCheck(confirm) {
+    document.getElementById('id_confirmed').value = confirm;
+    document.getElementById('id_denied').value = '-';
+    document.getElementById('approve-form').submit();
+}
+</script>
+
+{% endblock %}

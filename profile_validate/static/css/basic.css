@@ -1,0 +1,67 @@
+* {
+    box-sizing: border-box;
+}
+
+header{
+    height: 40px;
+    background-color: white;
+}
+
+main{
+    height: 900px;
+    background-color: #f8f8f8;
+}
+
+footer{
+    height: 200px;
+    background-color: white;
+}
+
+tr.collapse{
+    background-color: #EEE;
+}
+.member tr:hover {
+    background-color: rgba(41, 103, 182, 0.89);
+    color: #FFF;
+}
+.check.denied {
+    background-color: black;
+    color: white;
+}
+.denyShow {
+    color: red;
+}
+
+#totalCount{
+    display: flex;
+    flex-wrap: wrap;
+}
+pre.subCount_text{
+    width: 60px;
+    text-align: right;
+    float: left;
+}
+pre.subCount_num{
+    width: 20px;
+    text-align: left;
+    float: left;
+}
+
+td.shortCol {
+    width: 5%;
+}
+td.midCol {
+    width: 7.5%;
+}
+td.longCol {
+    width: 15%;
+}
+
+.index{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.subIndex{
+    float: left;
+}
